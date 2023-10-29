@@ -18,3 +18,6 @@
 
 # Сброс проекта
 `bash reset.sh` Для отката миграций, остановки докер-контейнеров и удаления зависимостей в папке vendor 
+
+# Рестарт Nginx
+`docker exec -w ./ yii_nginx nginx -s reload`

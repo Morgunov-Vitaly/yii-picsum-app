@@ -3,7 +3,9 @@
 namespace backend\controllers;
 
 use common\models\LoginForm;
+use frontend\models\ImageRates;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -48,6 +50,7 @@ class SiteController extends Controller
      */
     public function actions()
     {
+        $a = 'b';
         return [
             'error' => [
                 'class' => \yii\web\ErrorAction::class,
@@ -62,7 +65,26 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        //if (!Yii::$app->user->isGuest) {
+        //    return $this->goHome();
+        //}
+        //
+        //Yii::$app->session->setFlash('error', 'Sorry, we are unable to verify your account with provided token.');
+        //return $this->goHome();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => ImageRates::find(),
+            'pagination' => [
+                'pageSize' => 30,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ]
+            ],
+        ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     /**

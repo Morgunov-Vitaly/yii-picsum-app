@@ -6,10 +6,10 @@ use yii\db\ActiveRecord;
 
 class ImageRates extends ActiveRecord
 {
-    public int $id;
-    public int $extId;
-    public bool $isApproved;
-    public string $url;
+    public ?int $id = null;
+    public ?int $ext_id = null;
+    public ?bool $is_approved = null;
+    public ?string $url = null;
 
     public static function tableName(): string
     {
@@ -20,8 +20,8 @@ class ImageRates extends ActiveRecord
     {
         return [
             'id',
-            'extId' => 'ext_id',
-            'isApproved' => 'is_approved',
+            'ext_id',
+            'is_approved',
             'url'
         ];
     }
@@ -29,9 +29,9 @@ class ImageRates extends ActiveRecord
     public function attributeLabels(): array
     {
         return [
-            'id' => '#',
-            'extId' => 'Внешний ID',
-            'isApproved' => 'Оценка',
+            'id' => '#ID',
+            'ext_id' => 'Внешний ID',
+            'is_approved' => 'Оценка',
             'url' => 'Ссылка',
         ];
     }
@@ -39,15 +39,12 @@ class ImageRates extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['extId', 'url', 'isApproved'], 'required'],
-            ['isApproved', 'boolean'],
-            ['url', 'string', 'trim'],
-            [['extId', 'id'], 'integer']
+            [['ext_id', 'url', 'is_approved'], 'required'],
+            ['is_approved', 'boolean'],
+            ['url', 'string'],
+            ['url', 'trim'],
+            [['ext_id', 'id'], 'integer']
         ];
-    }
-
-    public function findOne(){
-
     }
 
     public function save($runValidation = true, $attributeNames = null): bool
