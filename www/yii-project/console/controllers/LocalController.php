@@ -2,7 +2,9 @@
 
 namespace console\controllers;
 
+use backend\controllers\SiteController;
 use common\models\User;
+use frontend\models\ImageRates;
 use yii\console\Controller;
 use yii\console\controllers\MigrateController;
 
@@ -30,10 +32,14 @@ class LocalController extends Controller
     }
 
     /**
-     * Command: php yii local/apply-migrations
+     * Command: php yii local/test-code
      */
-    public function actionApplyMigrations(): void
+    public function actionTestCode(): void
     {
-        \Yii::$app->runAction('migrate', ['migrationPath' => '@yii/rbac/migrations/']);
+        \Yii::$app->runAction('site/get-image');
+      //  \Yii::$app->runAction('migrate', ['migrationPath' => '@yii/rbac/migrations/']);
+        dump(
+            ImageRates::find()->all()
+        );
     }
 }

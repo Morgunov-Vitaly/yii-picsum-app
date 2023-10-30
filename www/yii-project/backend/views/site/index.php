@@ -1,7 +1,9 @@
 <?php
 
-/** @var yii\web\View $this */
+/** @var ActiveDataProvider $dataProvider */
 
+use frontend\models\ImageRates;
+use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 
 $this->title = 'Панель управления';
@@ -14,15 +16,9 @@ $this->title = 'Панель управления';
 
     <div class="body-content">
         <?php
-
         echo GridView::widget([
             'dataProvider' => $dataProvider,
-            //'columns' => [
-            //    'id',
-            //    'extId',
-            //    'isApproved',
-            //    'url'
-            //],
+            'columns' => ImageRates::columns(),
         ]);
         ?>
     </div>
