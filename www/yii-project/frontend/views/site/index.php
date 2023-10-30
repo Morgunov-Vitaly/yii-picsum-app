@@ -25,16 +25,13 @@ $model = null;
         <div class="row text-center">
             <div class="col-lg-3">
             </div>
-            <div class="col-lg-1">
-                <p><a class="btn btn-lg btn-outline-secondary" href="/prev">Пред.</a></p>
-            </div>
             <div class="col-lg-2">
                 <p><a id="btn-like" class="btn btn-lg btn-success" href="/approve">Нравится</a></p>
             </div>
             <div class="col-lg-2 right-align">
                 <p><a id="btn-dislike" class="btn btn-lg btn-danger" href="/reject">Не нравится</a></p>
             </div>
-            <div class="col-lg-1">
+            <div class="col-lg-2">
                 <p><a id="btn-next" class="btn btn-lg btn-outline-secondary" href="/next">След.</a></p>
             </div>
             <div class="col-lg-3">
