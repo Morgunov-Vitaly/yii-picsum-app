@@ -3,10 +3,15 @@
 namespace backend\controllers;
 
 use common\models\LoginForm;
+use frontend\models\ImageRates;
+use Throwable;
 use Yii;
+use yii\data\ActiveDataProvider;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\ErrorAction;
 use yii\web\Response;
 
 /**
@@ -14,17 +19,19 @@ use yii\web\Response;
  */
 class SiteController extends Controller
 {
+    public const ACCESS_TOKEN = 'xyz123';
+
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['login', 'error'],
+                        'actions' => ['login', 'error', 'delete'],
                         'allow' => true,
                     ],
                     [
@@ -46,23 +53,42 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function actions()
+    public function actions(): array
     {
         return [
             'error' => [
-                'class' => \yii\web\ErrorAction::class,
+                'class' => ErrorAction::class,
             ],
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
-    public function actionIndex()
+    public function actionIndex(?string $token = null): Response|string
     {
-        return $this->render('index');
+        //if (empty($token) || $token !== self::ACCESS_TOKEN) {
+        // todo пользователь авторизован видеть контент и администрировать данные
+        //    Yii::$app->session->setFlash(
+        //        'error',
+        //        'Токен доступа некорректен. В доступе отказано.'
+        //    );
+        //
+        //    return $this->goHome();
+        //}
+
+        $query = ImageRates::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 30,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ]
+            ],
+        ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
     /**
@@ -70,7 +96,7 @@ class SiteController extends Controller
      *
      * @return string|Response
      */
-    public function actionLogin()
+    public function actionLogin(): Response|string
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
@@ -91,11 +117,34 @@ class SiteController extends Controller
     }
 
     /**
+     * @throws Throwable
+     * @throws StaleObjectException
+     */
+    public function actionDelete($id): Response
+    {
+        $model = ImageRates::findOne($id);
+
+        if (isset($model) && $model->delete()) {
+            Yii::$app->session->setFlash(
+                    'success',
+                    'Оценка успешно отменена.'
+                );
+        } else {
+            Yii::$app->session->setFlash(
+                'error',
+                'Не удалось отменить оценку.'
+            );
+        }
+
+        return $this->refresh($anchor = '');
+    }
+
+    /**
      * Logout action.
      *
      * @return Response
      */
-    public function actionLogout()
+    public function actionLogout(): Response
     {
         Yii::$app->user->logout();
 

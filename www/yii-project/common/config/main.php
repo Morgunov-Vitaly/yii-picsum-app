@@ -1,5 +1,6 @@
 <?php
 return [
+    'name' => 'Yii Picsum',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
