@@ -15,6 +15,21 @@ use yii\web\Response;
  */
 class SiteController extends Controller
 {
+    private static function convertToBool(mixed $isApproved): ?bool
+    {
+        $str = strtolower(trim($isApproved));
+
+        if ($str === 'true' || $str === '1') {
+            return true;
+        }
+
+        if ($str === 'false' || $str === '0') {
+            return false;
+        }
+
+        return null;
+    }
+
     /**
      * Displays homepage.
      */
@@ -32,6 +47,7 @@ class SiteController extends Controller
         $message = 'Оценка успешно добавлена';
         $code = 200;
         $isSuccess = true;
+        $isApproved = self::convertToBool($isApproved);
 
         if (isset($extId, $isApproved, $url)) {
             $model = ImageRates::findOne(['ext_id' => (int)$extId]);
