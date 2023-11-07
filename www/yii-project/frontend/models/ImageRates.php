@@ -78,10 +78,4 @@ class ImageRates extends ActiveRecord
             ],
         ];
     }
-
-    //public function save($runValidation = true, $attributeNames = null): bool
-    //{
-    //
-    //    return parent::save($runValidation, $attributeNames);
-    //}
 }
