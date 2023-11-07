@@ -136,7 +136,7 @@ class SiteController extends Controller
             );
         }
 
-        return $this->refresh($anchor = '');
+        return $this->goHome();
     }
 
     /**
