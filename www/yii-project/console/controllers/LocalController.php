@@ -7,6 +7,7 @@ use common\models\User;
 use frontend\models\ImageRates;
 use yii\console\Controller;
 use yii\console\controllers\MigrateController;
+use yii\helpers\Console;
 
 class LocalController extends Controller
 {
@@ -36,10 +37,13 @@ class LocalController extends Controller
      */
     public function actionTestCode(): void
     {
-        \Yii::$app->runAction('site/get-image');
-      //  \Yii::$app->runAction('migrate', ['migrationPath' => '@yii/rbac/migrations/']);
-        dump(
-            ImageRates::find()->all()
-        );
+        Console::output('Выводим данные в консоль!');
+        Console::error('Выводим ошибку в консоль!');
+        exit();
+      //  \Yii::$app->runAction('site/get-image');
+      ////  \Yii::$app->runAction('migrate', ['migrationPath' => '@yii/rbac/migrations/']);
+      //  dump(
+      //      ImageRates::find()->all()
+      //  );
     }
 }

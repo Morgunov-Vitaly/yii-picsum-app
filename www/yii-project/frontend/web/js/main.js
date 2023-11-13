@@ -15,7 +15,20 @@ $(document).ready(function () {
         imageElement.attr("src", url);
     }
 
+    let disableBtns = function(elements){
+        elements.forEach(function(el){
+            el.addClass('disabled');
+        });
+    }
+
+    let enableBtns = function(elements){
+        elements.forEach(function(el){
+            el.removeClass('disabled');
+        });
+    }
+
     let loadNextPicture = function () {
+        disableBtns([btnLike, btnDislike, btnNextImage]);
         console.log('запрашиваем картинку');
 
         $.ajax({
@@ -32,19 +45,23 @@ $(document).ready(function () {
                     console.log('extId: ', extId);
                     console.log('url: ', url);
                     rerenderElements(extId, url);
+                    enableBtns([btnLike, btnDislike, btnNextImage]);
 
                 } else {
                     alert('Не удалось загрузить картинку');
+                    enableBtns([btnNextImage]);
                     // M.toast({'classes': 'danger', 'html': 'Не удалось сохранить оценку'});
                 }
             },
             error: function (jqXHR, exception) {
+                enableBtns([btnNextImage]);
                 alert('Что-то пошло не так при загрузке картинки.');
             }
         })
     }
 
     let addRate = function (isApproved) {
+        disableBtns([btnLike, btnDislike, btnNextImage]);
         console.log('isApproved: ', isApproved);
 
         $.ajax({
@@ -59,17 +76,18 @@ $(document).ready(function () {
 
             success: function (data) {
                 console.log(data);
-
                 if (data && data.success) {
                     // загрузить следующую картинку
                     loadNextPicture();
                 } else {
                     alert(data.message ?? 'Не удалось сохранить оценку');
+                    enableBtns([btnNextImage]);
                     // M.toast({'classes': 'danger', 'html': 'Не удалось сохранить оценку'});
                 }
             },
             error: function (jqXHR, exception) {
                 alert('Что-то пошло не так');
+                enableBtns([btnNextImage]);
             }
         })
     }

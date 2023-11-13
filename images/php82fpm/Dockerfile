@@ -22,7 +22,7 @@ RUN apt-get -y install sudo
 RUN docker-php-ext-install pdo_pgsql
 
 # special configuration for gd
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install gd
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install -j$(nproc) gd
 
 # composer install

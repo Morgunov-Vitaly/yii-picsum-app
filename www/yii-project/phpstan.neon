@@ -1,0 +1,29 @@
+parameters:
+    reportUnmatchedIgnoredErrors: false
+    paths:
+        - frontend/controllers
+        - frontend/assets
+        - frontend/models
+        - frontend/tests/unit
+        - frontend/views
+        - backend/controllers
+        #- backend/helpers
+        - backend/models
+        - backend/tests/unit
+        #- backend/widgets
+        - common/models
+        - common/helpers
+        #- common/interfaces
+        #- common/modules
+        #- common/rules
+        - common/tests/unit
+        - common/widgets
+        - console/controllers
+        #- console/helpers
+        - console/models
+
+    # The level 8 is the highest level
+    level: 4
+
+    bootstrapFiles:
+        - vendor/yiisoft/yii2/Yii.php

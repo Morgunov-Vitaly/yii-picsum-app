@@ -19,8 +19,6 @@ use yii\web\Response;
  */
 class SiteController extends Controller
 {
-    public const ACCESS_TOKEN = 'xyz123';
-
     /**
      * {@inheritdoc}
      */
@@ -29,13 +27,15 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
+                'only' => ['login', 'error', 'logout', 'index', 'delete'],
                 'rules' => [
                     [
-                        'actions' => ['login', 'error', 'delete'],
+                        'actions' => ['login', 'error'],
                         'allow' => true,
+                        'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['logout', 'index', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -62,24 +62,14 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionIndex(?string $token = null): Response|string
+    public function actionIndex(): Response|string
     {
-        //if (empty($token) || $token !== self::ACCESS_TOKEN) {
-        // todo пользователь авторизован видеть контент и администрировать данные
-        //    Yii::$app->session->setFlash(
-        //        'error',
-        //        'Токен доступа некорректен. В доступе отказано.'
-        //    );
-        //
-        //    return $this->goHome();
-        //}
-
         $query = ImageRates::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 30,
+                'pageSize' => 15,
             ],
             'sort' => [
                 'defaultOrder' => [
@@ -105,7 +95,11 @@ class SiteController extends Controller
         $this->layout = 'blank';
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+
+        if (
+            $model->load(Yii::$app->request->post())
+            && $model->login()
+        ) {
             return $this->goBack();
         }
 
@@ -126,13 +120,13 @@ class SiteController extends Controller
 
         if (isset($model) && $model->delete()) {
             Yii::$app->session->setFlash(
-                    'success',
-                    'Оценка успешно отменена.'
-                );
+                'success',
+                "Оценка #$id успешно удалена."
+            );
         } else {
             Yii::$app->session->setFlash(
                 'error',
-                'Не удалось отменить оценку.'
+                "Не удалось отменить оценку #$id."
             );
         }
 
@@ -141,13 +135,11 @@ class SiteController extends Controller
 
     /**
      * Logout action.
-     *
-     * @return Response
      */
     public function actionLogout(): Response
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        return $this->redirect('@frontendDomain');
     }
 }

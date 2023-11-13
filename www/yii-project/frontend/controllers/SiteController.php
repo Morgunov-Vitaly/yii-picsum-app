@@ -2,9 +2,12 @@
 
 namespace frontend\controllers;
 
+use common\helpers\CommonHelper;
 use frontend\models\ImageRates;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\httpclient\Client;
 use yii\httpclient\Exception;
 use yii\web\Controller;
@@ -15,19 +18,36 @@ use yii\web\Response;
  */
 class SiteController extends Controller
 {
-    private static function convertToBool(mixed $isApproved): ?bool
+    public function behaviors(): array
     {
-        $str = strtolower(trim($isApproved));
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['logout'],
+                'rules' => [
+                    [
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
+    }
 
-        if ($str === 'true' || $str === '1') {
-            return true;
-        }
-
-        if ($str === 'false' || $str === '0') {
-            return false;
-        }
-
-        return null;
+    public function actions(): array
+    {
+        return [
+            'error' => [
+                'class' => \yii\web\ErrorAction::class,
+            ],
+        ];
     }
 
     /**
@@ -47,9 +67,9 @@ class SiteController extends Controller
         $message = 'Оценка успешно добавлена';
         $code = 200;
         $isSuccess = true;
-        $isApproved = self::convertToBool($isApproved);
+        $isApproved = CommonHelper::convertToBool($isApproved);
 
-        if (isset($extId, $isApproved, $url)) {
+        if (isset($extId, $url)) {
             $model = ImageRates::findOne(['ext_id' => (int)$extId]);
 
             if ($model) {
@@ -91,9 +111,18 @@ class SiteController extends Controller
      */
     public function actionGetImage(): void
     {
+        // `identity` текущего пользователя. `Null`, если пользователь не аутентифицирован.
+        $identity = Yii::$app->user->identity;
+
+        // ID текущего пользователя. `Null`, если пользователь не аутентифицирован.
+        $id = Yii::$app->user->id;
+
+        // проверка на то, что текущий пользователь гость (не аутентифицирован)
+        $isGuest = Yii::$app->user->isGuest;
+
         $client = new Client();
 
-        # честное слово - впервые решил такое использовать ;)
+        # честное слово - впервые решил такое использовать
         requestPoint:
         $response = $client->createRequest()
             ->setMethod('GET')
@@ -136,6 +165,7 @@ class SiteController extends Controller
         }
 
         $ourResponse->send();
+
         return;
     }
 }
